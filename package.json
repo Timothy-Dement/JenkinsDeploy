@@ -5,8 +5,7 @@
     "author": "Timothy Dement",
     "license": "ISC",
     "dependencies": {
-        "aws-sdk": "^2.192.0",
-        "npm": "^5.8.0"
+        "aws-sdk": "^2.192.0"
     },
     "repository": {
         "type": "git",
