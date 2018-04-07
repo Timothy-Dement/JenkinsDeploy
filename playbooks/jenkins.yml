@@ -260,11 +260,11 @@
       template:
         src: /home/vagrant/share/JenkinsDeploy/templates/{{ item }}-post-receive
         dest: /home/{{ ansible_user }}/deploy/{{ item }}.git/hooks/post-receive
-        mode: 0600
+        mode: 0755
       with_items:
       - checkbox-stable
 
     - name: Add checkbox-stable remote to checkbox.io
       shell: 'git remote add checkbox-stable file:///home/{{ ansible_user }}/deploy/checkbox-stable.git'
       args:
-        chdir: 'cd /home/{{ ansible_user }}/checkbox.io'
+        chdir: '/home/{{ ansible_user }}/checkbox.io'
