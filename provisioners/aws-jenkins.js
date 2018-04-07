@@ -167,6 +167,47 @@ function provision()
                                                                 else
                                                                 {
                                                                     console.log('Successfully associated address\n');
+
+                                                                    fs.writeFile('/home/vagrant/share/JenkinsDeploy/keys/jenkins.key', privateKey, function(err)
+                                                                    {
+                                                                        if (err) console.log('Failed to write private key file\n\n', err, '\n');
+                                                                        else
+                                                                        {
+                                                                            console.log('Successfully wrote private key file\n');
+
+                                                                            fs.chmod('/home/vagrant/share/JenkinsDeploy/keys/jenkins.key', 0600, function(err)
+                                                                            {
+                                                                                if (err) console.log('Failed to change private key file permissions\n\n', err, '\n');
+                                                                                else console.log('Successfully changed file permissions\n');
+                                                                            });
+                                                                        }
+                                                                    });
+
+                                                                    var inventory = '[jenkins]\n';
+                                                                    inventory += publicIpAddress;
+                                                                    inventory += ' ansible_user=ubuntu';
+                                                                    inventory += ' ansible_ssh_private_key_file=/home/vagrant/share/JenkinsDeploy/keys/jenkins.key';
+                                                                    inventory += ' ansible_python_interpreter=/usr/bin/python3';
+
+                                                                    fs.writeFileSync('/home/vagrant/share/JenkinsDeploy/inventory', inventory, function(err)
+                                                                    {
+                                                                        if (err) console.log('Failed to write inventory file\n\n', err, '\n');
+                                                                        else console.log('Successfully wrote inventory file\n');
+                                                                    });
+
+                                                                    var jenkinsIpAddress = `\njenkins_ip_address: ${publicIpAddress}\n`;
+
+                                                                    fs.open('/home/vagrant/share/JenkinsDeploy/vars/main.yml', 'a', function(err)
+                                                                    {
+                                                                        if (err) console.log('Failed to open Ansible variable file\n\n', err, '\n');
+                                                                        else console.log('Successfully opened Ansible variable file\n');
+
+                                                                        fs.appendFile('/home/vagrant/share/JenkinsDeploy/vars/main.yml', jenkinsIpAddress, function(err)
+                                                                        {
+                                                                            if (err) console.log('Failed to append Ansible variable file\n\n', err, '\n');
+                                                                            else console.log('Successfully appended Ansible variable file\n');
+                                                                        });
+                                                                    });
                                                                 }
                                                             });
                                                         }
