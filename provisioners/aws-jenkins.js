@@ -110,7 +110,7 @@ function provision()
                                 var runInstanceParams =
                                 {
                                     ImageId : 'ami-dc2d10a6',
-                                    InstanceType : 'm3.medium',
+                                    InstanceType : 'm3.large',
                                     MinCount : 1,
                                     MaxCount : 1,
                                     KeyName : 'Jenkins',
