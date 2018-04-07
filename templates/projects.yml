@@ -5,7 +5,7 @@
            name: checkbox.io
            command: |
              rm -rf *
-             git clone https://{{ lookup('env', 'GITHUB_USERNAME') }}:{{ lookup('env', 'GITHUB_USERNAME') }}@github.ncsu.edu/tmdement/checkbox.io.git
+             git clone https://{{ lookup('env', 'GITHUB_USERNAME') }}:{{ lookup('env', 'GITHUB_PASSWORD') }}@github.ncsu.edu/tmdement/checkbox.io.git
              cd checkbox.io/server-side/site/
              npm install
       - '{name}_job':
