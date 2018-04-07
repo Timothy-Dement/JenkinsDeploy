@@ -168,14 +168,14 @@ function provision()
                                                                 {
                                                                     console.log('Successfully associated address\n');
 
-                                                                    fs.writeFile('/home/vagrant/share/JenkinsDeploy/keys/jenkins.key', privateKey, function(err)
+                                                                    fs.writeFile('/home/vagrant/share/JenkinsDeploy/jenkins.key', privateKey, function(err)
                                                                     {
                                                                         if (err) console.log('Failed to write private key file\n\n', err, '\n');
                                                                         else
                                                                         {
                                                                             console.log('Successfully wrote private key file\n');
 
-                                                                            fs.chmod('/home/vagrant/share/JenkinsDeploy/keys/jenkins.key', 0600, function(err)
+                                                                            fs.chmod('/home/vagrant/share/JenkinsDeploy/jenkins.key', 0600, function(err)
                                                                             {
                                                                                 if (err) console.log('Failed to change private key file permissions\n\n', err, '\n');
                                                                                 else console.log('Successfully changed file permissions\n');
@@ -186,7 +186,7 @@ function provision()
                                                                     var inventory = '[jenkins]\n';
                                                                     inventory += publicIpAddress;
                                                                     inventory += ' ansible_user=ubuntu';
-                                                                    inventory += ' ansible_ssh_private_key_file=/home/vagrant/share/JenkinsDeploy/keys/jenkins.key';
+                                                                    inventory += ' ansible_ssh_private_key_file=/home/vagrant/share/JenkinsDeploy/jenkins.key';
                                                                     inventory += ' ansible_python_interpreter=/usr/bin/python3';
 
                                                                     fs.writeFileSync('/home/vagrant/share/JenkinsDeploy/inventory', inventory, function(err)
