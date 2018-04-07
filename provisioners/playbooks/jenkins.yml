@@ -1,0 +1,229 @@
+---
+- hosts: jenkins
+
+  vars_files:
+    - /home/vagrant/share/JenkinsDeploy/vars/main.yml
+
+  become: yes
+
+  tasks:
+
+    - name: Add Ansible apt repository
+      apt_repository:
+        repo: ppa:ansible/ansible
+
+    - name: Get Jenkins apt key
+      apt_key:
+        url: https://pkg.jenkins.io/debian/jenkins.io.key
+
+    - name: Add Jenkins apt repository
+      apt_repository:
+        repo: deb http://pkg.jenkins.io/debian-stable binary/
+
+    - name: Set MySQL root password
+      debconf:
+        name: mysql-server
+        question: mysql-server/root_password
+        value: root
+        vtype: password
+
+    - name: Confirm MySQL root password
+      debconf:
+        name: mysql-server
+        question: mysql-server/root_password_again
+        value: root
+        vtype: password
+
+    - name: Install Ansible, JDK, Git, Jenkins, Maven, MySQL, pip, python-software-properties
+      apt:
+        name: "{{ item }}"
+        update_cache: yes
+      with_items:
+      - ansible
+      - default-jdk
+      - git
+      - jenkins
+      - maven
+      - mysql-server
+      - python-pip
+      - python-software-properties
+
+    - name: Update Node.js version pt 1
+      shell: 'curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -'
+
+    - name: Update Node.js version pt 2
+      apt:
+        name: nodejs
+
+    - name: Set AWS and GitHub environment variables
+      lineinfile:
+        path: /etc/environment
+        line: export {{ item }}={{ lookup('env', '{{ item }}') }}
+      with_items:
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
+      - GITHUB_USERNAME
+      - GITHUB_PASSWORD
+
+    - name: Disable Jenkins setup wizard
+      lineinfile:
+        dest: /etc/default/jenkins
+        regexp: '^JAVA_ARGS='
+        line: 'JAVA_ARGS="-Djava.awt.headless=true -Djenkins.install.runSetupWizard=false"'
+
+    - name: Set Jenkins HTTP listen address
+      lineinfile:
+        dest: /etc/default/jenkins
+        regexp: '^#--httpListenAddress=$HTTP_HOST (default 0.0.0.0)'
+        line: '--httpListenAddress=$HTTP_HOST (default 0.0.0.0)'
+
+    - name: Change Jenkins port
+      lineinfile:
+        dest: /etc/default/jenkins
+        regexp: '^HTTP_PORT='
+        line: 'HTTP_PORT=8081'
+
+    - name: Restart Jenkins
+      become: yes
+      service:
+        name: jenkins
+        state: restarted
+
+    - name: Wait for Jenkins
+      shell: "curl -D - --silent --max-time 5 http://{{ jenkins_ip_address }}:8081/cli/"
+      register: result
+      until: (result.stdout.find("403 Forbidden") != -1) or (result.stdout.find("200 OK") != -1) and (result.stdout.find("Please wait while") == -1)
+      retries: 50
+      delay: 5
+      changed_when: false
+      check_mode: no
+
+    - name: Create init.groovy.d directory
+      file:
+        path: /var/lib/jenkins/init.groovy.d
+        state: directory
+        mode: 0755
+
+    - name: Copy configure-user.groovy template
+      template:
+        src: /home/vagrant/share/JenkinsDeploy/templates/configure-users.groovy
+        dest: /var/lib/jenkins/init.groovy.d/configure-users.groovy
+        mode: 0755
+
+    - name: Restart Jenkins
+      become: yes
+      service:
+        name: jenkins
+        state: restarted
+
+    - name: Wait for Jenkins
+      shell: "curl -D - --silent --max-time 5 http://{{ jenkins_ip_address }}:8081/cli/"
+      register: result
+      until: (result.stdout.find("403 Forbidden") != -1) or (result.stdout.find("200 OK") != -1) and (result.stdout.find("Please wait while") == -1)
+      retries: 50
+      delay: 5
+      changed_when: false
+      check_mode: no
+
+    - name: Install postbuild-task Jenkins plugin
+      jenkins_plugin:
+        name: postbuild-task
+        params:
+          url_username: "{{ jenkins_username }}"
+        url_password: "{{ jenkins_password }}"
+        url: http://localhost:8081
+        with_dependencies: yes
+        timeout: 30
+        updates_expiration: 86400
+
+    - name: Install jacoco Jenkins plugin
+      jenkins_plugin:
+        name: jacoco
+        params:
+          url_username: "{{ jenkins_username }}"
+        url_password: "{{ jenkins_password }}"
+        url: http://localhost:8081
+        with_dependencies: yes
+        timeout: 30
+        updates_expiration: 86400
+
+    - name: Install htmlpublisher Jenkins plugin
+      jenkins_plugin:
+        name: htmlpublisher
+        params:
+          url_username: "{{ jenkins_username }}"
+        url_password: "{{ jenkins_password }}"
+        url: http://localhost:8081
+        with_dependencies: yes
+        timeout: 30
+        updates_expiration: 86400
+
+    - name: Instal git Jenkins plugin
+      jenkins_plugin:
+        name: git
+        params:
+          url_username: "{{ jenkins_username }}"
+        url_password: "{{ jenkins_password }}"
+        url: http://localhost:8081
+        with_dependencies: yes
+        timeout: 30
+        updates_expiration: 86400
+
+    - name: Add sudo permissions for jenkins user
+      lineinfile:
+        path: /etc/sudoers
+        line: "jenkins ALL=(ALL) NOPASSWD: ALL"
+
+    - name: Restart Jenkins
+      become: yes
+      service:
+        name: jenkins
+        state: restarted
+
+    - name: Wait for Jenkins
+      shell: "curl -D - --silent --max-time 5 http://{{ jenkins_ip_address }}:8081/cli/"
+      register: result
+      until: (result.stdout.find("403 Forbidden") != -1) or (result.stdout.find("200 OK") != -1) and (result.stdout.find("Please wait while") == -1)
+      retries: 50
+      delay: 5
+      changed_when: false
+      check_mode: no
+
+    - name: Install jenkins-job-builder
+      pip:
+        name: jenkins-job-builder
+        executable: pip2
+
+    - name: Create jenkins_jobs directory
+      file:
+        path: /etc/jenkins_jobs
+        state: directory
+        mode: 0755
+
+    - name: Copy jenkins_jobs.ini script
+      template:
+        src: /home/vagrant/share/JenkinsDeploy/templates/jenkins_jobs.ini
+        dest: /etc/jenkins_jobs/jenkins_jobs.ini
+        mode: 0755
+        force: yes
+
+    - name: Create jobs directory
+      file:
+        path: /home/{{ ansible_user }}/jobs
+        state: directory
+        mode: 0755
+
+    - name: Copy job file templates
+      become: yes
+      template:
+        src: /home/vagrant/share/JenkinsDeploy/templates/{{ item }}
+        dest: "/home/{{ ansible_user }}/jobs/{{ item }}"
+        force: yes
+        mode: 0755
+      with_items:
+      - "defaults.yml"
+      - "projects.yml"
+      - "test.yml"
+
+    - name: Update jobs
+      shell: "jenkins-jobs update --delete-old jobs"
