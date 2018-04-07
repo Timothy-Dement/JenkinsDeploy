@@ -258,7 +258,7 @@
 
     - name: Copy post-receive templates
       template:
-        src: /home/vagrant/templates/{{ item }}-post-receive
+        src: /home/vagrant/share/JenkinsDeploy/templates/{{ item }}-post-receive
         dest: /home/{{ ansible_user }}/deploy/{{ item }}.git/hooks/post-receive
         mode: 0600
       with_items:
