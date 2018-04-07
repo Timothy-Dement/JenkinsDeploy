@@ -1,0 +1,2 @@
+jenkins_username: "{{ lookup('env', 'JENKINS_USERNAME') }}"
+jenkins_password: "{{ lookup('env', 'JENKINS_PASSWORD') }}"
