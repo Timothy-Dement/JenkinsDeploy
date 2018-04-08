@@ -1,3 +1,12 @@
 #!/bin/bash
+
 GIT_WORK_TREE=/home/{{ ansible_user }}/deploy/checkbox-stable-www git checkout -f
-echo "Pushed to production"
+
+echo ""
+echo "|||||||||||||||||||||||||||||||||||||||||"
+echo "||||                                 ||||"
+echo "||||    Pushed to checkbox-stable    ||||"
+echo "||||                                 ||||"
+echo "|||||||||||||||||||||||||||||||||||||||||"
+echo ""
+

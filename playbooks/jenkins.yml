@@ -232,9 +232,9 @@
       file:
         path: /home/{{ ansible_user }}/deploy
         state: directory
+        mode: 0755
 
     - name: Clone checkbox.io and iTrust2-v1 projects
-      become: no
       git:
         repo: https://{{ lookup('env', 'GITHUB_USERNAME') }}:{{ lookup('env', 'GITHUB_PASSWORD') }}@github.ncsu.edu/tmdement/{{ item }}.git
         dest: /home/{{ ansible_user }}/{{ item }}
@@ -243,16 +243,15 @@
       - checkbox.io
 
     - name: Create deploy subdirectories
-      become: no
       file:
         path: /home/{{ ansible_user }}/deploy/{{ item }}
         state: directory
+        mode: 0755
       with_items:
       - checkbox-stable.git
       - checkbox-stable-www
 
     - name: Create bare git repositories
-      become: no
       shell: 'git init --bare'
       args:
         chdir: /home/{{ ansible_user }}/deploy/{{ item }}/
@@ -260,7 +259,6 @@
       - checkbox-stable.git
 
     - name: Copy post-receive templates
-      become: no
       template:
         src: /home/vagrant/share/JenkinsDeploy/templates/{{ item }}-post-receive
         dest: /home/{{ ansible_user }}/deploy/{{ item }}.git/hooks/post-receive
@@ -269,7 +267,6 @@
       - checkbox-stable
 
     - name: Add checkbox-stable remote to checkbox.io
-      become: no
       shell: 'git remote add checkbox-stable file:///home/{{ ansible_user }}/deploy/checkbox-stable.git'
       args:
         chdir: '/home/{{ ansible_user }}/checkbox.io'
