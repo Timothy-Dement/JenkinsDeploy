@@ -249,8 +249,9 @@
       - JenkinsDeploy
 
     - name: Install JenkinsDeploy packages
-      npm:
-        path: /home/{{ ansible_user }}/JenkinsDeploy
+      shell: "npm install"
+      args:
+        chdir: "/home/{{ ansible_user }}/JenkinsDeploy"
 
     - name: Create deploy subdirectories
       file:

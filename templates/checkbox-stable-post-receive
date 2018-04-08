@@ -10,8 +10,6 @@ echo "||||                                 ||||"
 echo "|||||||||||||||||||||||||||||||||||||||||"
 echo ""
 
-cd /home/ubuntu/JenkinsDeploy/
-
 echo ""
 echo "|||||||||||||||||||||||||||||||||||||||||||||||||||"
 echo "||||                                           ||||"
@@ -20,8 +18,8 @@ echo "||||                                           ||||"
 echo "|||||||||||||||||||||||||||||||||||||||||||||||||||"
 echo ""
 
-sudo node provisioners/aws-checkbox-stable.js
-sudo chown ubuntu /home/ubuntu/checkbox-stable.key
+sudo node /home/{{ ansible_user }}/JenkinsDeploy/provisioners/aws-checkbox-stable.js
+sudo chown ubuntu /home/{{ ansible_user }}/JenkinsDeploy/checkbox-stable.key
 
 echo ""
 echo "||||||||||||||||||||||||||||||||||||||||||||||||||"
@@ -31,4 +29,4 @@ echo "||||                                          ||||"
 echo "||||||||||||||||||||||||||||||||||||||||||||||||||"
 echo ""
 
-sudo ansible-playbook playbooks/checkbox-stable.yml -i checkbox-stable-inventory
+sudo ansible-playbook /home/{{ ansible_user }}/JenkinsDeploy/playbooks/checkbox-stable.yml -i /home/{{ ansible_user }}/JenkinsDeploy/checkbox-stable-inventory
