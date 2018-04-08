@@ -1,0 +1,110 @@
+---
+- hosts: checkbox-stable
+
+  become: yes
+
+  tasks:
+
+    - name: Pass environment variables
+      lineinfile:
+        path: /etc/environment
+        line: export {{ item }}={{ lookup('env', '{{ item }}') }}
+      with_items:
+      - MONGO_USER
+      - MONGO_PASSWORD
+      - MAIL_USER
+      - MAIL_PASSWORD
+
+    - name: Set additional environment variables
+      lineinfile:
+        path: /etc/environment
+        line: "{{ item  }}"
+      with_items:
+      - "export MONGO_PORT=3002"
+      - "export MONGO_IP=localhost"
+      - "export MAIL_SMTP=smtp.gmail.com"
+
+    - name: Install Git
+      apt:
+        name: git
+        update_cache: yes
+
+    - name: Update Node.js version pt 1
+      shell: 'curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -'
+
+    - name: Update Node.js version pt 2
+      apt:
+        name: nodejs
+
+    - name: Install mongodb pt 1
+      shell: 'sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 2930ADAE8CAF5059EE73BB4B58712A2291FA4AD5'
+
+    - name: Install mongodb pt 2
+      shell: 'echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.6 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-3.6.list'
+
+    - name: Install mongodb pt 3
+      apt:
+        name: mongodb-org
+        update_cache: yes
+
+    - name: Install the latest pymongo package
+        pip:
+          name: pymongo
+          state: latest
+          use_mirrors: no
+
+    - name: Install nginx
+          become: yes
+          apt:
+            pkg: nginx
+            state: latest
+            update_cache: yes
+
+    - name: Copy checkbox-stable source code
+      copy:
+        src: /home/ubuntu/deploy/checkbox-stable-www
+        dest: /home/{{ ansible_user }}/checkbox.io
+
+    - name: Start MongoDB service
+      service:
+        name: mongod
+        state: restarted
+
+    - name: Create MongoDb user
+      mongodb_user:
+        database: "admin"
+        name: "{{ lookup('env', 'MONGO_USER') }}"
+        password: "{{ lookup('env', 'MONGO_PASSWORD') }}"
+        roles: readWriteAnyDatabase,dbAdmin,userAdminAnyDatabase
+
+    - name: Install Checkbox packages
+      npm:
+        path: /home/{{ ansible_user }}/checkbox.io/server-side/site
+
+    - name: Update location of public_html into default
+      replace:
+        dest: /home/{{ ansible_user }}/checkbox.io/local-conf/default
+        regexp: '/Users/gameweld/bitbucket/checkbox.io/checkbox.io/public_html'
+        replace: '/home/{{ ansible_user }}/checkbox.io/public_html'
+
+    - name: Copy default to different location
+      shell: 'cp /home/{{ ansible_user }}/checkbox.io/local-conf/default /etc/nginx/sites-available/default'
+
+    - name: Copy nginx to different location
+      shell: 'cp /home/{{ ansible_user }}/checkbox.io/local-conf/nginx.conf /etc/nginx/nginx.conf'
+
+    - name: Restart nginx
+      service:
+        name: nginx
+        state: restarted
+
+    - name: Install pm2 globally
+      npm:
+        name: pm2
+        global: yes
+
+    - name: Start the Checkbox server
+      shell: 'pm2 start server.js'
+      args:
+        chdir: '/home/{{ ansible_user }}/checkbox.io/server-side/site'
+    

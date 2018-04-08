@@ -55,7 +55,7 @@
       apt:
         name: nodejs
 
-    - name: Set AWS and GitHub environment variables
+    - name: Pass environment variables
       lineinfile:
         path: /etc/environment
         line: export {{ item }}={{ lookup('env', '{{ item }}') }}
@@ -64,6 +64,10 @@
       - AWS_SECRET_ACCESS_KEY
       - GITHUB_USERNAME
       - GITHUB_PASSWORD
+      - MONGO_USER
+      - MONGO_PASSWORD
+      - MAIL_USER
+      - MAIL_PASSWORD
 
     - name: Disable Jenkins setup wizard
       lineinfile:
@@ -234,13 +238,19 @@
         state: directory
         mode: 0755
 
-    - name: Clone checkbox.io and iTrust2-v1 projects
+    - name: Clone checkbox.io, iTrust2-v1 projects, and JenkinsDeploy projects
       git:
         repo: https://{{ lookup('env', 'GITHUB_USERNAME') }}:{{ lookup('env', 'GITHUB_PASSWORD') }}@github.ncsu.edu/tmdement/{{ item }}.git
         dest: /home/{{ ansible_user }}/{{ item }}
         force: yes
       with_items:
       - checkbox.io
+      - iTrust2-v1
+      - JenkinsDeploy
+
+    - name: Install JenkinsDeploy packages
+      npm:
+        path: /home/{{ ansible_user }}/JenkinsDeploy
 
     - name: Create deploy subdirectories
       file:

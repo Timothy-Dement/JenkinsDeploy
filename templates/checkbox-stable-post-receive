@@ -10,3 +10,25 @@ echo "||||                                 ||||"
 echo "|||||||||||||||||||||||||||||||||||||||||"
 echo ""
 
+cd /home/ubuntu/JenkinsDeploy/
+
+echo ""
+echo "|||||||||||||||||||||||||||||||||||||||||||||||||||"
+echo "||||                                           ||||"
+echo "||||    Provisioning Checkbox-Stable server    ||||"
+echo "||||                                           ||||"
+echo "|||||||||||||||||||||||||||||||||||||||||||||||||||"
+echo ""
+
+sudo node provisioners/aws-checkbox-stable.js
+sudo chown ubuntu /home/ubuntu/checkbox-stable.key
+
+echo ""
+echo "||||||||||||||||||||||||||||||||||||||||||||||||||"
+echo "||||                                          ||||"
+echo "||||    Configuring Checkbox-Stable server    ||||"
+echo "||||                                          ||||"
+echo "||||||||||||||||||||||||||||||||||||||||||||||||||"
+echo ""
+
+sudo ansible-playbook playbooks/checkbox-stable.yml -i checkbox-stable-inventory
