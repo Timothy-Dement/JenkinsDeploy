@@ -188,7 +188,7 @@ function provision()
                                                                     inventory += ` ansible_user=ubuntu`;
                                                                     inventory += ` ansible_ssh_private_key_file=/home/ubuntu/JenkinsDeploy/checkbox-stable.key`;
                                                                     inventory += ` ansible_python_interpreter=/usr/bin/python3`;
-                                                                    inventory += ` ansible_ssh_common_args='-o StrictHostChecking=no'`;
+                                                                    inventory += ` ansible_ssh_common_args='-o StrictHostKeyChecking=no'`;
 
                                                                     fs.writeFileSync('/home/ubuntu/JenkinsDeploy/checkbox-stable-inventory', inventory, function(err)
                                                                     {

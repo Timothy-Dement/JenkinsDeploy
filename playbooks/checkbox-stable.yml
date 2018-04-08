@@ -24,10 +24,13 @@
       - "export MONGO_IP=localhost"
       - "export MAIL_SMTP=smtp.gmail.com"
 
-    - name: Install Git
+    - name: Install Git and Pip 3
       apt:
-        name: git
+        name: "{{ item  }}"
         update_cache: yes
+      with_items:
+      - git
+      - python3-pip
 
     - name: Update Node.js version pt 1
       shell: 'curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -'
