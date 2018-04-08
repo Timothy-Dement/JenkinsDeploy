@@ -20,6 +20,7 @@ echo ""
 
 sudo node /home/{{ ansible_user }}/JenkinsDeploy/provisioners/aws-checkbox-stable.js
 sudo chown ubuntu /home/{{ ansible_user }}/JenkinsDeploy/checkbox-stable.key
+sleep 10
 
 echo ""
 echo "||||||||||||||||||||||||||||||||||||||||||||||||||"
