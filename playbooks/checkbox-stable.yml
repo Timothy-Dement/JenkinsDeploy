@@ -88,8 +88,14 @@
     - name: Update location of public_html into default
       replace:
         dest: "/home/{{ ansible_user }}/checkbox-stable-www/local-conf/default"
-        regexp: "/Users/gameweld/bitbucket/checkbox.io/checkbox.io/public_html/c"
+        regexp: "/Users/gameweld/bitbucket/checkbox.io/checkbox.io/public_html/"
         replace: "/home/{{ ansible_user }}/checkbox-stable-www/public_html"
+
+    - name: Update location of public_html into default
+      replace:
+        dest: "/home/{{ansible_user}}/checkbox-stable-www/local-conf/default"
+        regexp: "/Users/gameweld/bitbucket/checkbox.io/checkbox.io/public_html"
+        replace: "/home/{{ ansible_user}}/checkbox-stable-www/public_html"
 
     - name: Copy default to different location
       shell: "cp /home/{{ ansible_user }}/checkbox-stable-www/local-conf/default /etc/nginx/sites-available/default"
