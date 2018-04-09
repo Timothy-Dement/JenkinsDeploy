@@ -48,7 +48,7 @@
         state: absent
 
     - name: Rename itrust-alpha-www directory
-      shell: "cp /home/{{ ansible_user }}/itrust-alpha-www /home/{{ ansible_user }}/iTrust2-v1"
+      shell: "mv /home/{{ ansible_user }}/itrust-alpha-www /home/{{ ansible_user }}/iTrust2-v1"
 
     - name: Rename db.properties.template
       shell: "cp /home/{{ ansible_user }}/iTrust2-v1/iTrust2/src/main/java/db.properties.template /home/{{ ansible_user }}/iTrust2-v1/iTrust2/src/main/java/db.properties"
