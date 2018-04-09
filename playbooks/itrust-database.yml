@@ -1,0 +1,25 @@
+---
+- hosts: itrust-database
+
+  become: yes
+
+  tasks:
+
+    - name: Set MySQL root password
+      debconf:
+        name: mysql-server
+        question: mysql-server/root_password
+        value: root
+        vtype: password
+
+    - name: Confirm MySQL root password
+      debconf:
+        name: mysql-server
+        question: mysql-server/root_password_again
+        value: root
+        vtype: password
+
+    - name: Install MySQL server
+      apt:
+        name: mysql-server
+        update_cache: yes
