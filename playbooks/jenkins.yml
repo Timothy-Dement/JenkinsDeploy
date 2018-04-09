@@ -234,14 +234,14 @@
 
     - name: Create deploy directory
       file:
-        path: /home/{{ ansible_user }}/deploy
+        path: "/home/{{ ansible_user }}/deploy"
         state: directory
         mode: 0755
 
     - name: Clone checkbox.io, iTrust2-v1 projects, and JenkinsDeploy projects
       git:
-        repo: https://{{ lookup('env', 'GITHUB_USERNAME') }}:{{ lookup('env', 'GITHUB_PASSWORD') }}@github.ncsu.edu/tmdement/{{ item }}.git
-        dest: /home/{{ ansible_user }}/{{ item }}
+        repo: "https://{{ lookup('env', 'GITHUB_USERNAME') }}:{{ lookup('env', 'GITHUB_PASSWORD') }}@github.ncsu.edu/tmdement/{{ item }}.git"
+        dest: "/home/{{ ansible_user }}/{{ item }}"
         force: yes
       with_items:
       - checkbox.io
@@ -255,29 +255,38 @@
 
     - name: Create deploy subdirectories
       file:
-        path: /home/{{ ansible_user }}/deploy/{{ item }}
+        path: "/home/{{ ansible_user }}/deploy/{{ item }}"
         state: directory
         mode: 0755
       with_items:
       - checkbox-stable.git
       - checkbox-stable-www
+      - itrust-alpha.git
+      - itrust-alpha-www
 
     - name: Create bare git repositories
-      shell: 'git init --bare'
+      shell: "git init --bare"
       args:
-        chdir: /home/{{ ansible_user }}/deploy/{{ item }}/
+        chdir: "/home/{{ ansible_user }}/deploy/{{ item }}/"
       with_items:
       - checkbox-stable.git
+      - itrust-alpha.git
 
     - name: Copy post-receive templates
       template:
-        src: /home/vagrant/share/JenkinsDeploy/templates/{{ item }}-post-receive
-        dest: /home/{{ ansible_user }}/deploy/{{ item }}.git/hooks/post-receive
+        src: "/home/vagrant/share/JenkinsDeploy/templates/{{ item }}-post-receive"
+        dest: "/home/{{ ansible_user }}/deploy/{{ item }}.git/hooks/post-receive"
         mode: 0755
       with_items:
       - checkbox-stable
+      - itrust-alpha
 
     - name: Add checkbox-stable remote to checkbox.io
-      shell: 'git remote add checkbox-stable file:///home/{{ ansible_user }}/deploy/checkbox-stable.git'
+      shell: "git remote add checkbox-stable file:///home/{{ ansible_user }}/deploy/checkbox-stable.git"
       args:
-        chdir: '/home/{{ ansible_user }}/checkbox.io'
+        chdir: "/home/{{ ansible_user }}/checkbox.io"
+
+    - name: Add itrust-alpha remote to iTrust2-v1
+      shell: "git remote add itrust-alpha file:///home/{{ ansible_user }}/deploy/itrust-alpha.git"
+      args:
+        chdir: "/home/{{ ansible_user }}/iTrust2-v1"

@@ -1,0 +1,33 @@
+#!/bin/bash
+
+GIT_WORK_TREE=/home/{{ ansible_user }}/deploy/itrust-alpha-www git checkout -f
+
+echo ""
+echo "||||||||||||||||||||||||||||||||||||||"
+echo "||||                              ||||"
+echo "||||    Pushed to itrust-alpha    ||||"
+echo "||||                              ||||"
+echo "||||||||||||||||||||||||||||||||||||||"
+echo ""
+
+echo ""
+echo "||||||||||||||||||||||||||||||||||||||||||||||||"
+echo "||||                                        ||||"
+echo "||||    Provisioning iTrust-Alpha server    ||||"
+echo "||||                                        ||||"
+echo "||||||||||||||||||||||||||||||||||||||||||||||||"
+echo ""
+
+sudo node /home/{{ ansible_user }}/JenkinsDeploy/provisioners/aws-itrust-alpha.js
+sudo chown ubuntu /home/{{ ansible_user }}/JenkinsDeploy/itrust-alpha.key
+sleep 10
+
+echo ""
+echo "|||||||||||||||||||||||||||||||||||||||||||||||"
+echo "||||                                       ||||"
+echo "||||    Configuring iTrust-Alpha server    ||||"
+echo "||||                                       ||||"
+echo "|||||||||||||||||||||||||||||||||||||||||||||||"
+echo ""
+
+sudo ansible-playbook /home/{{ ansible_user }}/JenkinsDeploy/playbooks/itrust-alpha.yml -i /home/{{ ansible_user }}/JenkinsDeploy/itrust-alpha-inventory
