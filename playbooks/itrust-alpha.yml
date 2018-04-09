@@ -42,17 +42,22 @@
         src: "/home/ubuntu/deploy/itrust-alpha-www"
         dest: "/home/{{ ansible_user }}/"
 
+    - name: Remove iTrust2-v1 directory if present
+      file:
+        path: "home/{{ ansible_user }}/iTrust2-v1"
+        state: absent
+
     - name: Rename itrust-alpha-www directory
-      shell: "mv /home/{{ ansible_user }}/itrust-alpha-www /home/{{ ansible_user }}/iTrust2-v1"
+      shell: "cp /home/{{ ansible_user }}/itrust-alpha-www /home/{{ ansible_user }}/iTrust2-v1"
 
     - name: Rename db.properties.template
-      shell: "mv /home/{{ ansible_user }}/iTrust2-v1/iTrust2/src/main/java/db.properties.template /home/{{ ansible_user }}/iTrust2-v1/iTrust2/src/main/java/db.properties"
+      shell: "cp /home/{{ ansible_user }}/iTrust2-v1/iTrust2/src/main/java/db.properties.template /home/{{ ansible_user }}/iTrust2-v1/iTrust2/src/main/java/db.properties"
 
     - name: Rename email.properties.template
-      shell: "mv /home/{{ ansible_user }}/iTrust2-v1/iTrust2/src/main/java/email.properties.template /home/{{ ansible_user }}/iTrust2-v1/iTrust2/src/main/java/email.properties"
+      shell: "cp /home/{{ ansible_user }}/iTrust2-v1/iTrust2/src/main/java/email.properties.template /home/{{ ansible_user }}/iTrust2-v1/iTrust2/src/main/java/email.properties"
 
     - name: Rename hibernate.properties.template
-      shell: "mv /home/{{ ansible_user }}/iTrust2-v1/iTrust2/src/main/resources/hibernate.properties.template /home/{{ ansible_user }}/iTrust2-v1/iTrust2/src/main/resources/hibernate.properties"
+      shell: "cp /home/{{ ansible_user }}/iTrust2-v1/iTrust2/src/main/resources/hibernate.properties.template /home/{{ ansible_user }}/iTrust2-v1/iTrust2/src/main/resources/hibernate.properties"
 
     - name: Update db.properties 'password'
       lineinfile:

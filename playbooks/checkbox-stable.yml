@@ -68,6 +68,11 @@
         src: "/home/ubuntu/deploy/checkbox-stable-www"
         dest: "/home/{{ ansible_user }}/"
 
+    - name: Remove checkbox.io directory if present
+      file:
+        path: "/home/{{ ansible_user }}/checkbox.io"
+        state: absent
+
     - name: Rename checkbox-stable-www directory
       shell: "mv /home/{{ ansible_user }}/checkbox-stable-www /home/{{ ansible_user }}/checkbox.io"
 
