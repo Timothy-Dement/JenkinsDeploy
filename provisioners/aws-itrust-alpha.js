@@ -162,12 +162,6 @@ function provision()
                                                                 {
                                                                     console.log('Successfully associated address\n');
 
-                                                                    ////////////////////////////////////
-                                                                    //                                //
-                                                                    //    ALL THIS NEEDS TO CHANGE    //
-                                                                    //                                //
-                                                                    ////////////////////////////////////
-
                                                                     fs.writeFile('/home/ubuntu/JenkinsDeploy/itrust-alpha.key', privateKey, function(err)
                                                                     {
                                                                         if (err) console.log('Failed to write private key file\n\n', err, '\n');

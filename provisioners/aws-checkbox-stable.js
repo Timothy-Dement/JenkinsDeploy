@@ -161,13 +161,7 @@ function provision()
                                                                 else
                                                                 {
                                                                     console.log('Successfully associated address\n');
-
-                                                                    ////////////////////////////////////
-                                                                    //                                //
-                                                                    //    ALL THIS NEEDS TO CHANGE    //
-                                                                    //                                //
-                                                                    ////////////////////////////////////
-
+                                                                    
                                                                     fs.writeFile('/home/ubuntu/JenkinsDeploy/checkbox-stable.key', privateKey, function(err)
                                                                     {
                                                                         if (err) console.log('Failed to write private key file\n\n', err, '\n');
