@@ -286,12 +286,12 @@
       - checkbox
       - itrust
 
-    - name: Add checkbox-stable remote to checkbox.io
-      shell: "git remote add checkbox-stable file:///home/{{ ansible_user }}/deploy/checkbox-stable.git"
+    - name: Add checkbox remote to checkbox.io
+      shell: "git remote add checkbox file:///home/{{ ansible_user }}/deploy/checkbox.git"
       args:
         chdir: "/home/{{ ansible_user }}/checkbox.io"
 
-    - name: Add itrust-alpha remote to iTrust2-v1
-      shell: "git remote add itrust-alpha file:///home/{{ ansible_user }}/deploy/itrust-alpha.git"
+    - name: Add itrust remote to iTrust2-v1
+      shell: "git remote add itrust file:///home/{{ ansible_user }}/deploy/itrust.git"
       args:
         chdir: "/home/{{ ansible_user }}/iTrust2-v1"
