@@ -21,14 +21,10 @@ var publicIpAddress;
 
 var instances = [ 'alpha', 'bravo', 'charlie', 'delta', 'echo' ];
 
-for (i = 0; i < instances.length; i++)
+for (let i = 0; i < instances.length; i++)
 {
     var instance = instances[i];
-    check(instance);
-}
 
-function check(instance)
-{
     var describeInstancesParams =
     {
         Filters :
@@ -47,7 +43,7 @@ function check(instance)
         {
             console.log('\nSuccessfully described instance\n');
     
-            if (data.Reservations.length === 0) provision();
+            if (data.Reservations.length === 0) provision(instance);
             else console.log(`The iTrust-${instance} server has already been provisioned\n`);
         }
     });
@@ -88,8 +84,14 @@ function provision(instance)
                         [
                             {
                                 IpProtocol : 'tcp',
-                                FromPort : 3306,
-                                ToPort : 3306,
+                                FromPort : 22,
+                                ToPort : 22,
+                                IpRanges : [ { 'CidrIp' : '0.0.0.0/0' } ]
+                            },
+                            {
+                                IpProtocol : 'tcp',
+                                FromPort : 8080,
+                                ToPort : 8080,
                                 IpRanges : [ { 'CidrIp' : '0.0.0.0/0' } ]
                             }
                         ]
