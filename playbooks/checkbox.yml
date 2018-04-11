@@ -63,6 +63,11 @@
         state: latest
         update_cache: yes
 
+    - name: Remove checkbox-www directory if present
+      file:
+        path: "/home/{{ ansible_user }}/checkbox-www"
+        state: absent
+
     - name: Copy checkbox-www source code
       copy:
         src: "/home/ubuntu/deploy/checkbox-www"

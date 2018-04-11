@@ -37,6 +37,11 @@
       - maven
       - mysql-server
 
+    - name: Remove itrust-www directory if present
+      file:
+        path: "/home/{{ ansible_user }}/itrust-www"
+        state: absent
+
     - name: Copy itrust-www source code
       copy:
         src: "/home/ubuntu/deploy/itrust-www"
