@@ -1,0 +1,8 @@
+---
+- hosts: itrust-cluster
+
+  vars_files:
+    - /home/ubuntu/JenkinsDeploy/vars/main.yml
+
+  become: yes
+

@@ -1,106 +1,125 @@
 ---
 - hosts: itrust-database
 
-  ######################################
-  ##                                  ##
-  ##    THIS NEEDS TO BE REWRITTEN    ##
-  ##                                  ##
-  ######################################
+  gather_facts: no
 
-  # become: yes
+  become: yes
 
-  # tasks:
+  tasks:
 
-  #   - name: Pass environment variables
-  #     lineinfile:
-  #       path: "/etc/environment"
-  #       line: "export {{ item }}={{ lookup('env', '{{ item }}') }}"
-  #     with_items:
-  #     - MAIL_USER
-  #     - MAIL_PASSWORD
+    - name: Install Python 2
+      raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
 
-  #   - name: Set MySQL root password
-  #     debconf:
-  #       name: mysql-server
-  #       question: mysql-server/root_password
-  #       value: root
-  #       vtype: password
+    - name: Pass environment variables
+      lineinfile:
+        path: "/etc/environment"
+        line: "export {{ item }}={{ lookup('env', '{{ item }}') }}"
+      with_items:
+      - MAIL_USER
+      - MAIL_PASSWORD
+      - MYSQL_ROOT_USER
+      - MYSQL_ROOT_PASSWORD
+      - MYSQL_DB_USER
+      - MYSQL_DB_PASSWORD
 
-  #   - name: Confirm MySQL root password
-  #     debconf:
-  #       name: mysql-server
-  #       question: mysql-server/root_password_again
-  #       value: root
-  #       vtype: password
+    - name: Set MySQL root password
+      debconf:
+        name: mysql-server
+        question: mysql-server/root_password
+        value: root
+        vtype: password
 
-  #   - name: Install Git, JDK, Maven, MySQL
-  #     apt:
-  #       name: "{{ item }}"
-  #       update_cache: yes
-  #     with_items:
-  #     - git
-  #     - default-jdk
-  #     - maven
-  #     - mysql-server
+    - name: Confirm MySQL root password
+      debconf:
+        name: mysql-server
+        question: mysql-server/root_password_again
+        value: root
+        vtype: password
 
-  #   - name: Copy iTrust2-v1 source code
-  #     copy:
-  #       src: "/home/ubuntu/iTrust2-v1"
-  #       dest: "/home/{{ ansible_user }}/"
+    - name: Install Git, JDK, Maven, MySQL, Python-MySQL
+      apt:
+        name: "{{ item }}"
+        update_cache: yesP
+      with_items:
+      - git
+      - default-jdk
+      - maven
+      - mysql-server
+      - python-mysqldb
 
-  #   - name: Rename db.properties.template
-  #     shell: "cp /home/{{ ansible_user }}/iTrust2-v1/iTrust2/src/main/java/db.properties.template /home/{{ ansible_user }}/iTrust2-v1/iTrust2/src/main/java/db.properties"
+    - name: Copy iTrust2-v1 source code
+      copy:
+        src: "/home/ubuntu/iTrust2-v1"
+        dest: "/home/{{ ansible_user }}/"
 
-  #   - name: Rename email.properties.template
-  #     shell: "cp /home/{{ ansible_user }}/iTrust2-v1/iTrust2/src/main/java/email.properties.template /home/{{ ansible_user }}/iTrust2-v1/iTrust2/src/main/java/email.properties"
+    - name: Rename db.properties.template
+      shell: "cp /home/{{ ansible_user }}/iTrust2-v1/iTrust2/src/main/java/db.properties.template /home/{{ ansible_user }}/iTrust2-v1/iTrust2/src/main/java/db.properties"
 
-  #   - name: Rename hibernate.properties.template
-  #     shell: "cp /home/{{ ansible_user }}/iTrust2-v1/iTrust2/src/main/resources/hibernate.properties.template /home/{{ ansible_user }}/iTrust2-v1/iTrust2/src/main/resources/hibernate.properties"
+    - name: Rename email.properties.template
+      shell: "cp /home/{{ ansible_user }}/iTrust2-v1/iTrust2/src/main/java/email.properties.template /home/{{ ansible_user }}/iTrust2-v1/iTrust2/src/main/java/email.properties"
 
-  #   - name: Update db.properties 'password'
-  #     lineinfile:
-  #       path: "/home/{{ ansible_user }}/iTrust2-v1/iTrust2/src/main/java/db.properties"
-  #       regexp: "password"
-  #       line: "password root"
+    - name: Rename hibernate.properties.template
+      shell: "cp /home/{{ ansible_user }}/iTrust2-v1/iTrust2/src/main/resources/hibernate.properties.template /home/{{ ansible_user }}/iTrust2-v1/iTrust2/src/main/resources/hibernate.properties"
 
-  #   - name: Update email.properties 'from'
-  #     lineinfile:
-  #       path: "/home/{{ ansible_user }}/iTrust2-v1/iTrust2/src/main/java/email.properties"
-  #       regexp: "from"
-  #       line: "from {{ lookup('env', 'MAIL_USER') }}"
+    - name: Update db.properties 'password'
+      lineinfile:
+        path: "/home/{{ ansible_user }}/iTrust2-v1/iTrust2/src/main/java/db.properties"
+        regexp: "password"
+        line: "password {{ lookup('env', 'MYSQL_ROOT_PASSWORD') }}"
 
-  #   - name: Update email.properties 'username'
-  #     lineinfile:
-  #       path: "/home/{{ ansible_user }}/iTrust2-v1/iTrust2/src/main/java/email.properties"
-  #       regexp: "username"
-  #       line: "username {{ lookup('env', 'MAIL_USER') }}"
+    - name: Update email.properties 'from'
+      lineinfile:
+        path: "/home/{{ ansible_user }}/iTrust2-v1/iTrust2/src/main/java/email.properties"
+        regexp: "from"
+        line: "from {{ lookup('env', 'MAIL_USER') }}"
 
-  #   - name: Update email.properties 'password'
-  #     lineinfile:
-  #       path: "/home/{{ ansible_user }}/iTrust2-v1/iTrust2/src/main/java/email.properties"
-  #       regexp: "password"
-  #       line: "password {{ lookup('env', 'MAIL_PASSWORD') }}"
+    - name: Update email.properties 'username'
+      lineinfile:
+        path: "/home/{{ ansible_user }}/iTrust2-v1/iTrust2/src/main/java/email.properties"
+        regexp: "username"
+        line: "username {{ lookup('env', 'MAIL_USER') }}"
 
-  #   - name: Update hibernate.properties 'hibernate.connection.password'
-  #     lineinfile:
-  #       path: "/home/{{ ansible_user }}/iTrust2-v1/iTrust2/src/main/resources/hibernate.properties"
-  #       regexp: "hibernate.connection.password ="
-  #       line: "hibernate.connection.password = root"
+    - name: Update email.properties 'password'
+      lineinfile:
+        path: "/home/{{ ansible_user }}/iTrust2-v1/iTrust2/src/main/java/email.properties"
+        regexp: "password"
+        line: "password {{ lookup('env', 'MAIL_PASSWORD') }}"
 
-  #   - name: Restart MySQL
-  #     service:
-  #       name: mysql
-  #       state: restarted
+    - name: Update hibernate.properties 'hibernate.connection.password'
+      lineinfile:
+        path: "/home/{{ ansible_user }}/iTrust2-v1/iTrust2/src/main/resources/hibernate.properties"
+        regexp: "hibernate.connection.password ="
+        line: "hibernate.connection.password = {{ lookup('env', 'MYSQL_ROOT_PASSWORD') }}"
+
+    - name: Copy my.cnf configuration file
+      copy:
+        src: "/home/ubuntu/JenkinsDeploy/templates/my.cnf"
+        dest: "/etc/mysql/my.cnf"
+
+    - name: Create MySQL database user
+      mysql_user:
+        name: "{{ lookup('env', 'MYSQL_DB_USER') }}"
+        password: "{{ lookup('env', 'MYSQL_DB_PASSWORD') }}"
+        host: "%"
+        priv: "*.*:ALL"
+        state: present
+        login_user: "{{ lookup('env', 'MYSQL_ROOT_USER') }}"
+        login_password: "{{ lookup('env', 'MYSQL_ROOT_PASSWORD') }}"
+
+    - name: Restart MySQL
+      service:
+        name: mysql
+        state: restarted
 
   #   - name: Run mvn clean test verify checkstyle:checkstyle
   #     shell: "mvn clean test verify checkstyle:checkstyle"
   #     args:
   #       chdir: "/home/{{ ansible_user }}/iTrust2-v1/iTrust2"
 
-  #   - name: Run mvn process-test-classes
-  #     shell: "mvn process-test-classes"
-  #     args:
-  #       chdir: "/home/{{ ansible_user }}/iTrust2-v1/iTrust2"
+    - name: Run mvn process-test-classes
+      shell: "mvn process-test-classes -f pom-data.xml"
+      args:
+        chdir: "/home/{{ ansible_user }}/iTrust2-v1/iTrust2"
 
   #   - name: Run mvn jetty:run
   #     shell: "nohup bash -c 'sudo mvn jetty:run' &"

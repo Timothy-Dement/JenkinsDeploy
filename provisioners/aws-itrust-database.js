@@ -181,7 +181,6 @@ function provision()
                                                                     inventory += publicIpAddress;
                                                                     inventory += ` ansible_user=ubuntu`;
                                                                     inventory += ` ansible_ssh_private_key_file=/home/ubuntu/JenkinsDeploy/itrust-database.key`;
-                                                                    inventory += ` ansible_python_interpreter=/usr/bin/python3`;
                                                                     inventory += ` ansible_ssh_common_args='-o StrictHostKeyChecking=no'`;
 
                                                                     fs.writeFileSync('/home/ubuntu/JenkinsDeploy/itrust-database-inventory', inventory, function(err)
@@ -189,6 +188,21 @@ function provision()
                                                                         if (err) console.log('Failed to write inventory file\n\n', err, '\n');
                                                                         else console.log('Successfully wrote inventory file\n');
                                                                     });
+
+                                                                    var iTrustDatabaseIpAddress = `\nitrust_database_ip_address: ${publicIpAddress}\n`;
+
+                                                                    fs.open('/home/ubuntu/JenkinsDeploy/vars/main.yml', 'a', function(err)
+                                                                    {
+                                                                        if (err) console.log('Failed to open Ansible variable file\n\n', err, '\n');
+                                                                        else console.log('Successfully opened Ansible variable file\n');
+
+                                                                        fs.appendFile('/home/ubuntu/JenkinsDeploy/vars/main.yml', iTrustDatabaseIpAddress, function(err)
+                                                                        {
+                                                                            if (err) console.log('Failed to append Ansible variable file\n\n', err, '\n');
+                                                                            else console.log('Successfully appended Ansible variable file\n');
+                                                                        });
+                                                                    });
+
                                                                 }
                                                             });
                                                         }
