@@ -39,7 +39,7 @@
     - name: Install Git, JDK, Maven, MySQL, Python-MySQL
       apt:
         name: "{{ item }}"
-        update_cache: yesP
+        update_cache: yes
       with_items:
       - git
       - default-jdk
