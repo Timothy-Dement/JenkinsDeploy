@@ -44,7 +44,11 @@ EC2.describeInstances(describeInstancesParams, function(err, data)
 
 function provision()
 {
-    console.log('Beginning EC2 provisioning...\n');
+    console.log('||||||||||||||||||||||||||||||||||||||||||||||||||||||\n');
+    console.log('||||                                              ||||\n');
+    console.log('||||    Beginning iTrust-Alpha provisioning...    ||||\n');
+    console.log('||||                                              ||||\n');
+    console.log('||||||||||||||||||||||||||||||||||||||||||||||||||||||\n');
 
     var createKeyPairParams = { KeyName : 'iTrust-Alpha' };
 
@@ -204,12 +208,12 @@ function provision()
                                                                         inventory += ` ansible_user=ubuntu`;
                                                                         inventory += ` ansible_ssh_private_key_file=/home/ubuntu/JenkinsDeploy/itrust-alpha.key`;
                                                                         inventory += ` ansible_python_interpreter=/usr/bin/python3`;
-                                                                        inventory += ` ansible_ssh_common_args='-o StrictHostKeyChecking=no'`;
+                                                                        inventory += ` ansible_ssh_common_args='-o StrictHostKeyChecking=no'\n`;
                                                                     
-                                                                        fs.writeFileSync('/home/ubuntu/JenkinsDeploy/itrust-cluster-inventory', inventory, function(err)
+                                                                        fs.writeFile('/home/ubuntu/JenkinsDeploy/itrust-cluster-inventory', inventory, function(err)
                                                                         {
-                                                                            if (err) console.log('Failed to write inventory file\n\n', err, '\n');
-                                                                            else console.log('Successfully wrote inventory file\n');
+                                                                            if (err) console.log('Failed to write itrust-cluster-inventory file\n\n', err, '\n');
+                                                                            else console.log('Successfully wrote itrust-cluster-inventory file\n');
                                                                         });
                                                                     }
                                                                 }
