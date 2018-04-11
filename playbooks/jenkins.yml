@@ -68,6 +68,10 @@
       - MONGO_PASSWORD
       - MAIL_USER
       - MAIL_PASSWORD
+      - MYSQL_ROOT_USER
+      - MYSQL_ROOT_PASSWORD
+      - MYSQL_DB_USER
+      - MYSQL_DB_PASSWORD
 
     - name: Disable Jenkins setup wizard
       lineinfile:
@@ -238,7 +242,7 @@
         state: directory
         mode: 0755
 
-    - name: Clone checkbox.io, iTrust2-v1 projects, and JenkinsDeploy projects
+    - name: Clone checkbox.io, iTrust2-v1, iTrust2-v2, and JenkinsDeploy projects
       git:
         repo: "https://{{ lookup('env', 'GITHUB_USERNAME') }}:{{ lookup('env', 'GITHUB_PASSWORD') }}@github.ncsu.edu/tmdement/{{ item }}.git"
         dest: "/home/{{ ansible_user }}/{{ item }}"
@@ -246,6 +250,7 @@
       with_items:
       - checkbox.io
       - iTrust2-v1
+      - iTrust2-v2
       - JenkinsDeploy
 
     - name: Install JenkinsDeploy packages
@@ -259,18 +264,18 @@
         state: directory
         mode: 0755
       with_items:
-      - checkbox-stable.git
-      - checkbox-stable-www
-      - itrust-alpha.git
-      - itrust-alpha-www
+      - checkbox.git
+      - checkbox-www
+      - itrust.git
+      - itrust-www
 
     - name: Create bare git repositories
       shell: "git init --bare"
       args:
         chdir: "/home/{{ ansible_user }}/deploy/{{ item }}/"
       with_items:
-      - checkbox-stable.git
-      - itrust-alpha.git
+      - checkbox.git
+      - itrust.git
 
     - name: Copy post-receive templates
       template:
@@ -278,8 +283,8 @@
         dest: "/home/{{ ansible_user }}/deploy/{{ item }}.git/hooks/post-receive"
         mode: 0755
       with_items:
-      - checkbox-stable
-      - itrust-alpha
+      - checkbox
+      - itrust
 
     - name: Add checkbox-stable remote to checkbox.io
       shell: "git remote add checkbox-stable file:///home/{{ ansible_user }}/deploy/checkbox-stable.git"

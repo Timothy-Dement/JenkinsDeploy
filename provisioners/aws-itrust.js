@@ -1,11 +1,11 @@
 
-////////////////////////////////////
-//                                //
-//    iTrust-Alpha Provisioner    //
-//    Timothy Dement              //
-//    MON 16 APR 2018             //
-//                                //
-////////////////////////////////////
+//////////////////////////////
+//                          //
+//    iTrust Provisioner    //
+//    Timothy Dement        //
+//    MON 16 APR 2018       //
+//                          //
+//////////////////////////////
 
 var AWS = require('aws-sdk');
 var fs = require('fs');
@@ -25,7 +25,7 @@ var describeInstancesParams =
     [
         {
             Name : 'tag:Name',
-            Values : [ 'iTrust-Alpha' ]
+            Values : [ 'iTrust' ]
         }
     ]
 };
@@ -38,7 +38,7 @@ EC2.describeInstances(describeInstancesParams, function(err, data)
         console.log('\nSuccessfully described instance\n');
 
         if (data.Reservations.length === 0) provision();
-        else console.log('The iTrust-Alpha server has already been provisioned\n');
+        else console.log('The iTrust server has already been provisioned\n');
     }
 });
 
@@ -46,7 +46,7 @@ function provision()
 {
     console.log('Beginning EC2 provisioning...\n');
 
-    var createKeyPairParams = { KeyName : 'iTrust-Alpha' };
+    var createKeyPairParams = { KeyName : 'iTrust' };
 
     EC2.createKeyPair(createKeyPairParams, function(err, data)
     {
@@ -59,8 +59,8 @@ function provision()
 
             var createSecurityGroupParams =
             {
-                Description : 'iTrust-Alpha',
-                GroupName : 'iTrust-Alpha'
+                Description : 'iTrust',
+                GroupName : 'iTrust'
             };
 
             EC2.createSecurityGroup(createSecurityGroupParams, function(err, data)
@@ -72,7 +72,7 @@ function provision()
 
                     var authorizeSecurityGroupIngressParams =
                     {
-                        GroupName : 'iTrust-Alpha',
+                        GroupName : 'iTrust',
                         IpPermissions :
                         [
                             {
@@ -107,8 +107,8 @@ function provision()
                                     InstanceType : 'm3.large',
                                     MinCount : 1,
                                     MaxCount : 1,
-                                    KeyName : 'iTrust-Alpha',
-                                    SecurityGroups : [ 'iTrust-Alpha' ]
+                                    KeyName : 'iTrust',
+                                    SecurityGroups : [ 'iTrust' ]
                                 };
 
                                 EC2.runInstances(runInstanceParams, function(err, data)
@@ -127,7 +127,7 @@ function provision()
                                             var createTagsParams =
                                             {
                                                 Resources : [ instanceId ],
-                                                Tags : [ { Key : 'Name', Value : 'iTrust-Alpha' } ]
+                                                Tags : [ { Key : 'Name', Value : 'iTrust' } ]
                                             };
 
                                             EC2.createTags(createTagsParams, function(err, data)
@@ -162,14 +162,14 @@ function provision()
                                                                 {
                                                                     console.log('Successfully associated address\n');
 
-                                                                    fs.writeFile('/home/ubuntu/JenkinsDeploy/itrust-alpha.key', privateKey, function(err)
+                                                                    fs.writeFile('/home/ubuntu/JenkinsDeploy/itrust.key', privateKey, function(err)
                                                                     {
                                                                         if (err) console.log('Failed to write private key file\n\n', err, '\n');
                                                                         else
                                                                         {
                                                                             console.log('Successfully wrote private key file\n');
 
-                                                                            fs.chmod('/home/ubuntu/JenkinsDeploy/itrust-alpha.key', 0600, function(err)
+                                                                            fs.chmod('/home/ubuntu/JenkinsDeploy/itrust.key', 0600, function(err)
                                                                             {
                                                                                 if (err) console.log('Failed to change private key file permissions\n\n', err, '\n');
                                                                                 else console.log('Successfully changed file permissions\n');
@@ -177,14 +177,14 @@ function provision()
                                                                         }
                                                                     });
 
-                                                                    var inventory = `[itrust-alpha]\n`;
+                                                                    var inventory = `[itrust]\n`;
                                                                     inventory += publicIpAddress;
                                                                     inventory += ` ansible_user=ubuntu`;
-                                                                    inventory += ` ansible_ssh_private_key_file=/home/ubuntu/JenkinsDeploy/itrust-alpha.key`;
+                                                                    inventory += ` ansible_ssh_private_key_file=/home/ubuntu/JenkinsDeploy/itrust.key`;
                                                                     inventory += ` ansible_python_interpreter=/usr/bin/python3`;
                                                                     inventory += ` ansible_ssh_common_args='-o StrictHostKeyChecking=no'`;
 
-                                                                    fs.writeFileSync('/home/ubuntu/JenkinsDeploy/itrust-alpha-inventory', inventory, function(err)
+                                                                    fs.writeFileSync('/home/ubuntu/JenkinsDeploy/itrust-inventory', inventory, function(err)
                                                                     {
                                                                         if (err) console.log('Failed to write inventory file\n\n', err, '\n');
                                                                         else console.log('Successfully wrote inventory file\n');

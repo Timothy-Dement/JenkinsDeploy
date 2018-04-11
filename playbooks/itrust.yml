@@ -1,5 +1,5 @@
 ---
-- hosts: itrust-alpha
+- hosts: itrust
 
   become: yes
 
@@ -17,14 +17,14 @@
       debconf:
         name: mysql-server
         question: mysql-server/root_password
-        value: root
+        value: "{{ lookup('env', 'MYSQL_ROOT_PASSWORD') }}"
         vtype: password
 
     - name: Confirm MySQL root password
       debconf:
         name: mysql-server
         question: mysql-server/root_password_again
-        value: root
+        value: "{{ lookup('env', 'MYSQL_ROOT_PASSWORD') }}"
         vtype: password
 
     - name: Install Git, JDK, Maven, MySQL
@@ -37,9 +37,9 @@
       - maven
       - mysql-server
 
-    - name: Copy itrust-alpha-www source code
+    - name: Copy itrust-www source code
       copy:
-        src: "/home/ubuntu/deploy/itrust-alpha-www"
+        src: "/home/ubuntu/deploy/itrust-www"
         dest: "/home/{{ ansible_user }}/"
 
     - name: Remove iTrust2-v1 directory if present
@@ -47,8 +47,8 @@
         path: "home/{{ ansible_user }}/iTrust2-v1"
         state: absent
 
-    - name: Rename itrust-alpha-www directory
-      shell: "mv /home/{{ ansible_user }}/itrust-alpha-www /home/{{ ansible_user }}/iTrust2-v1"
+    - name: Rename itrust-www directory
+      shell: "mv /home/{{ ansible_user }}/itrust-www /home/{{ ansible_user }}/iTrust2-v1"
 
     - name: Rename db.properties.template
       shell: "cp /home/{{ ansible_user }}/iTrust2-v1/iTrust2/src/main/java/db.properties.template /home/{{ ansible_user }}/iTrust2-v1/iTrust2/src/main/java/db.properties"
@@ -89,18 +89,23 @@
         regexp: "hibernate.connection.password ="
         line: "hibernate.connection.password = root"
 
+    - name: Copy my.cnf configuration file
+      copy:
+        src: "/home/ubuntu/JenkinsDeploy/templates/my.cnf"
+        dest: "/etc/mysql/my.cnf"
+
     - name: Restart MySQL
       service:
         name: mysql
         state: restarted
 
-    - name: Run mvn clean test verify checkstyle:checkstyle
-      shell: "mvn clean test verify checkstyle:checkstyle"
-      args:
-        chdir: "/home/{{ ansible_user }}/iTrust2-v1/iTrust2"
+    # - name: Run mvn clean test verify checkstyle:checkstyle
+    #   shell: "mvn clean test verify checkstyle:checkstyle"
+    #   args:
+    #     chdir: "/home/{{ ansible_user }}/iTrust2-v1/iTrust2"
 
     - name: Run mvn process-test-classes
-      shell: "mvn process-test-classes"
+      shell: "mvn process-test-classes -f pom-data.xml"
       args:
         chdir: "/home/{{ ansible_user }}/iTrust2-v1/iTrust2"
 

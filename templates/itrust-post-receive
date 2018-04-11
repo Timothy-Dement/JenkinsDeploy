@@ -1,0 +1,33 @@
+#!/bin/bash
+
+GIT_WORK_TREE=/home/{{ ansible_user }}/deploy/itrust-www git checkout -f
+
+echo ""
+echo "||||||||||||||||||||||||||||||||"
+echo "||||                        ||||"
+echo "||||    Pushed to itrust    ||||"
+echo "||||                        ||||"
+echo "||||||||||||||||||||||||||||||||"
+echo ""
+
+echo ""
+echo "||||||||||||||||||||||||||||||||||||||||||"
+echo "||||                                  ||||"
+echo "||||    Provisioning iTrust server    ||||"
+echo "||||                                  ||||"
+echo "||||||||||||||||||||||||||||||||||||||||||"
+echo ""
+
+sudo node /home/{{ ansible_user }}/JenkinsDeploy/provisioners/aws-itrust.js
+sudo chown ubuntu /home/{{ ansible_user }}/JenkinsDeploy/itrust.key
+sleep 30
+
+echo ""
+echo "|||||||||||||||||||||||||||||||||||||||||"
+echo "||||                                 ||||"
+echo "||||    Configuring iTrust server    ||||"
+echo "||||                                 ||||"
+echo "|||||||||||||||||||||||||||||||||||||||||"
+echo ""
+
+sudo ansible-playbook /home/{{ ansible_user }}/JenkinsDeploy/playbooks/itrust.yml -i /home/{{ ansible_user }}/JenkinsDeploy/itrust-inventory

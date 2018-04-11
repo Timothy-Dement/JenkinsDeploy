@@ -1,5 +1,5 @@
 ---
-- hosts: checkbox-stable
+- hosts: checkbox
 
   become: yes
 
@@ -63,9 +63,9 @@
         state: latest
         update_cache: yes
 
-    - name: Copy checkbox-stable-www source code
+    - name: Copy checkbox-www source code
       copy:
-        src: "/home/ubuntu/deploy/checkbox-stable-www"
+        src: "/home/ubuntu/deploy/checkbox-www"
         dest: "/home/{{ ansible_user }}/"
 
     - name: Remove checkbox.io directory if present
@@ -73,8 +73,8 @@
         path: "/home/{{ ansible_user }}/checkbox.io"
         state: absent
 
-    - name: Rename checkbox-stable-www directory
-      shell: "mv /home/{{ ansible_user }}/checkbox-stable-www /home/{{ ansible_user }}/checkbox.io"
+    - name: Rename checkbox-www directory
+      shell: "mv /home/{{ ansible_user }}/checkbox-www /home/{{ ansible_user }}/checkbox.io"
 
     - name: Start MongoDB service
       service:
