@@ -76,7 +76,7 @@ function provision()
                         IpPermissions :
                         [
                             {
-                                IpProtocol : 'tcp',
+                                IpProtocol : 'all',
                                 FromPort : 0,
                                 ToPort : 65535,
                                 IpRanges : [ { 'CidrIp' : '0.0.0.0/0' } ]

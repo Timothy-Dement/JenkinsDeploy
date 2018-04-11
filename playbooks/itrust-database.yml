@@ -47,47 +47,47 @@
       - mysql-server
       - python-mysqldb
 
-    - name: Copy iTrust2-v2 source code
+    - name: Copy iTrust2-v1 source code
       copy:
-        src: "/home/ubuntu/iTrust2-v2"
+        src: "/home/ubuntu/iTrust2-v1"
         dest: "/home/{{ ansible_user }}/"
 
     - name: Rename db.properties.template
-      shell: "cp /home/{{ ansible_user }}/iTrust2-v2/iTrust2/src/main/java/db.properties.template /home/{{ ansible_user }}/iTrust2-v2/iTrust2/src/main/java/db.properties"
+      shell: "cp /home/{{ ansible_user }}/iTrust2-v1/iTrust2/src/main/java/db.properties.template /home/{{ ansible_user }}/iTrust2-v1/iTrust2/src/main/java/db.properties"
 
     - name: Rename email.properties.template
-      shell: "cp /home/{{ ansible_user }}/iTrust2-v2/iTrust2/src/main/java/email.properties.template /home/{{ ansible_user }}/iTrust2-v2/iTrust2/src/main/java/email.properties"
+      shell: "cp /home/{{ ansible_user }}/iTrust2-v1/iTrust2/src/main/java/email.properties.template /home/{{ ansible_user }}/iTrust2-v1/iTrust2/src/main/java/email.properties"
 
     - name: Rename hibernate.properties.template
-      shell: "cp /home/{{ ansible_user }}/iTrust2-v2/iTrust2/src/main/resources/hibernate.properties.template /home/{{ ansible_user }}/iTrust2-v2/iTrust2/src/main/resources/hibernate.properties"
+      shell: "cp /home/{{ ansible_user }}/iTrust2-v1/iTrust2/src/main/resources/hibernate.properties.template /home/{{ ansible_user }}/iTrust2-v1/iTrust2/src/main/resources/hibernate.properties"
 
     - name: Update db.properties 'password'
       lineinfile:
-        path: "/home/{{ ansible_user }}/iTrust2-v2/iTrust2/src/main/java/db.properties"
+        path: "/home/{{ ansible_user }}/iTrust2-v1/iTrust2/src/main/java/db.properties"
         regexp: "password"
         line: "password {{ lookup('env', 'MYSQL_ROOT_PASSWORD') }}"
 
     - name: Update email.properties 'from'
       lineinfile:
-        path: "/home/{{ ansible_user }}/iTrust2-v2/iTrust2/src/main/java/email.properties"
+        path: "/home/{{ ansible_user }}/iTrust2-v1/iTrust2/src/main/java/email.properties"
         regexp: "from"
         line: "from {{ lookup('env', 'MAIL_USER') }}"
 
     - name: Update email.properties 'username'
       lineinfile:
-        path: "/home/{{ ansible_user }}/iTrust2-v2/iTrust2/src/main/java/email.properties"
+        path: "/home/{{ ansible_user }}/iTrust2-v1/iTrust2/src/main/java/email.properties"
         regexp: "username"
         line: "username {{ lookup('env', 'MAIL_USER') }}"
 
     - name: Update email.properties 'password'
       lineinfile:
-        path: "/home/{{ ansible_user }}/iTrust2-v2/iTrust2/src/main/java/email.properties"
+        path: "/home/{{ ansible_user }}/iTrust2-v1/iTrust2/src/main/java/email.properties"
         regexp: "password"
         line: "password {{ lookup('env', 'MAIL_PASSWORD') }}"
 
     - name: Update hibernate.properties 'hibernate.connection.password'
       lineinfile:
-        path: "/home/{{ ansible_user }}/iTrust2-v2/iTrust2/src/main/resources/hibernate.properties"
+        path: "/home/{{ ansible_user }}/iTrust2-v1/iTrust2/src/main/resources/hibernate.properties"
         regexp: "hibernate.connection.password ="
         line: "hibernate.connection.password = {{ lookup('env', 'MYSQL_ROOT_PASSWORD') }}"
 
@@ -114,14 +114,14 @@
   #   - name: Run mvn clean test verify checkstyle:checkstyle
   #     shell: "mvn clean test verify checkstyle:checkstyle"
   #     args:
-  #       chdir: "/home/{{ ansible_user }}/iTrust2-v2/iTrust2"
+  #       chdir: "/home/{{ ansible_user }}/iTrust2-v1/iTrust2"
 
     - name: Run mvn process-test-classes
       shell: "mvn process-test-classes -f pom-data.xml"
       args:
-        chdir: "/home/{{ ansible_user }}/iTrust2-v2/iTrust2"
+        chdir: "/home/{{ ansible_user }}/iTrust2-v1/iTrust2"
 
   #   - name: Run mvn jetty:run
   #     shell: "nohup bash -c 'sudo mvn jetty:run' &"
   #     args:
-  #       chdir: "/home/{{ ansible_user }}/iTrust2-v2/iTrust2"
+  #       chdir: "/home/{{ ansible_user }}/iTrust2-v1/iTrust2"
