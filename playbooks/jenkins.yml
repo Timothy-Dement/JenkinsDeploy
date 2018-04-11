@@ -24,14 +24,14 @@
       debconf:
         name: mysql-server
         question: mysql-server/root_password
-        value: root
+        value: "{{ lookup('env', 'MYSQL_ROOT_PASSWORD') }}"
         vtype: password
 
     - name: Confirm MySQL root password
       debconf:
         name: mysql-server
         question: mysql-server/root_password_again
-        value: root
+        value: "{{ lookup('env', 'MYSQL_ROOT_PASSWORD') }}"
         vtype: password
 
     - name: Install Ansible, JDK, Git, Jenkins, Maven, MySQL, pip, python-software-properties
