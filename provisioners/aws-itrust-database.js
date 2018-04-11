@@ -77,14 +77,8 @@ function provision()
                         [
                             {
                                 IpProtocol : 'tcp',
-                                FromPort : 0,
-                                ToPort : 65535,
-                                IpRanges : [ { 'CidrIp' : '0.0.0.0/0' } ]
-                            },
-                            {
-                                IpProtocol : 'udp',
-                                FromPort : 0,
-                                ToPort : 65535,
+                                FromPort : 3306,
+                                ToPort : 3306,
                                 IpRanges : [ { 'CidrIp' : '0.0.0.0/0' } ]
                             }
                         ]
