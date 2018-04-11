@@ -68,20 +68,12 @@
         src: "/home/ubuntu/deploy/checkbox-www"
         dest: "/home/{{ ansible_user }}/"
 
-    - name: Remove checkbox.io directory if present
-      file:
-        path: "/home/{{ ansible_user }}/checkbox.io"
-        state: absent
-
-    - name: Rename checkbox-www directory
-      shell: "mv /home/{{ ansible_user }}/checkbox-www /home/{{ ansible_user }}/checkbox.io"
-
     - name: Start MongoDB service
       service:
         name: mongod
         state: restarted
 
-    - name: Create MongoDb user
+    - name: Create MongoDB user
       mongodb_user:
         database: "admin"
         name: "{{ lookup('env', 'MONGO_USER') }}"
@@ -91,25 +83,19 @@
     - name: Install Checkbox packages
       shell: "npm install"
       args:
-        chdir: "/home/{{ ansible_user }}/checkbox.io/server-side/site"
+        chdir: "/home/{{ ansible_user }}/checkbox-www/server-side/site"
 
     - name: Update location of public_html into default
       replace:
-        dest: "/home/{{ ansible_user }}/checkbox.io/local-conf/default"
+        dest: "/home/{{ ansible_user }}/checkbox-www/local-conf/default"
         regexp: "/Users/gameweld/bitbucket/checkbox.io/checkbox.io/public_html/"
-        replace: "/home/{{ ansible_user }}/checkbox.io/public_html"
-
-    - name: Update location of public_html into default
-      replace:
-        dest: "/home/{{ansible_user}}/checkbox.io/local-conf/default"
-        regexp: "/Users/gameweld/bitbucket/checkbox.io/checkbox.io/public_html"
-        replace: "/home/{{ ansible_user}}/checkbox.io/public_html"
+        replace: "/home/{{ ansible_user }}/checkbox-www/public_html"
 
     - name: Copy default to different location
-      shell: "cp /home/{{ ansible_user }}/checkbox.io/local-conf/default /etc/nginx/sites-available/default"
+      shell: "cp /home/{{ ansible_user }}/checkbox-www/local-conf/default /etc/nginx/sites-available/default"
 
     - name: Copy nginx to different location
-      shell: "cp /home/{{ ansible_user }}/checkbox.io/local-conf/nginx.conf /etc/nginx/nginx.conf"
+      shell: "cp /home/{{ ansible_user }}/checkbox-www/local-conf/nginx.conf /etc/nginx/nginx.conf"
 
     - name: Restart nginx
       service:
@@ -124,4 +110,4 @@
     - name: Start the Checkbox server
       shell: "pm2 start server.js -f"
       args:
-        chdir: "/home/{{ ansible_user }}/checkbox.io/server-side/site"
+        chdir: "/home/{{ ansible_user }}/checkbox-www/server-side/site"
