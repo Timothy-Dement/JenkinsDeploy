@@ -47,9 +47,9 @@
       - mysql-server
       - python-mysqldb
 
-    - name: Copy iTrust2-v1 source code
+    - name: Copy iTrust2-v2 source code
       copy:
-        src: "/home/ubuntu/iTrust2-v1"
+        src: "/home/ubuntu/iTrust2-v2"
         dest: "/home/{{ ansible_user }}/"
 
     - name: Rename db.properties.template
