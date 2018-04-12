@@ -26,17 +26,17 @@
     - name: Copy db.properties template
       template:
         src: "/home/ubuntu/JenkinsDeploy/templates/db.properties"
-        dest: "/home/{{ ansible_user }}/iTrust2-v2/src/mail/java/db.properties"
+        dest: "/home/{{ ansible_user }}/iTrust2-v2/src/main/java/db.properties"
 
     - name: Copy email.properties.template
       template:
         src: "/home/ubuntu/JenkinsDeploy/templates/email.properties"
-        dest: "/home/{{ ansible_user }}/iTrust2-v2/src/mail/java/email.properties"
+        dest: "/home/{{ ansible_user }}/iTrust2-v2/src/main/java/email.properties"
 
     - name: Copy hibernate.properties template
       template:
         src: "/home/ubuntu/JenkinsDeploy/templates/hibernate.properties"
-        dest: "/home/{{ ansible_user }}/iTrust2-v2/src/mail/resources/hibernate.properties"
+        dest: "/home/{{ ansible_user }}/iTrust2-v2/src/main/resources/hibernate.properties"
 
     # - name: Run mvn clean test verify checkstyle:checkstyle
     #   shell: "mvn clean test verify checkstyle:checkstyle"
