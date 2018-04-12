@@ -5,7 +5,10 @@
     "author": "Timothy Dement",
     "license": "ISC",
     "dependencies": {
-        "aws-sdk": "^2.192.0"
+        "aws-sdk": "^2.192.0",
+        "colors": "^1.2.1",
+        "node-datetime": "^2.0.6",
+        "request": "^2.85.0"
     },
     "repository": {
         "type": "git",
