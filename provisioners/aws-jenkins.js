@@ -195,7 +195,7 @@ function provision()
                                                                     inventory += ' ansible_ssh_private_key_file=/home/vagrant/share/JenkinsDeploy/jenkins.key';
                                                                     inventory += ' ansible_python_interpreter=/usr/bin/python3';
 
-                                                                    fs.writeFileSync('/home/vagrant/share/JenkinsDeploy/inventory', inventory, function(err)
+                                                                    fs.writeFile('/home/vagrant/share/JenkinsDeploy/inventory', inventory, function(err)
                                                                     {
                                                                         if (err) console.log('Failed to write inventory file\n\n', err, '\n');
                                                                         else console.log('Successfully wrote inventory file\n');

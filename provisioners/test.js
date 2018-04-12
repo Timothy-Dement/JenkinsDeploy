@@ -48,7 +48,7 @@ else
     inventory += ` ansible_python_interpreter=/usr/bin/python3`;
     inventory += ` ansible_ssh_common_args='-o StrictHostKeyChecking=no'`;
 
-    fs.writeFileSync('/home/ubuntu/JenkinsDeploy/itrust-cluster-inventory', inventory, function(err)
+    fs.writeFile('/home/ubuntu/JenkinsDeploy/itrust-cluster-inventory', inventory, function(err)
     {
         if (err) console.log('Failed to write inventory file\n\n', err, '\n');
         else console.log('Successfully wrote inventory file\n');
