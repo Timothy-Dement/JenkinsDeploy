@@ -20,7 +20,7 @@
 
     - name: Copy iTrust2-v2 source code
       copy:
-        src: "/home/ubuntu/deploy/iTrust2-v2"
+        src: "/home/ubuntu/iTrust2-v2"
         dest: "/home/{{ ansible_user }}/"
 
     - name: Copy db.properties template

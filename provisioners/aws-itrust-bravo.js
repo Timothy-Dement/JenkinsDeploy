@@ -44,10 +44,10 @@ EC2.describeInstances(describeInstancesParams, function(err, data)
 
 function provision()
 {
-    console.log('||||||||||||||||||||||||||||||||||||||||||||||||||||||\n');
-    console.log('||||                                              ||||\n');
-    console.log('||||    Beginning iTrust-Bravo provisioning...    ||||\n');
-    console.log('||||                                              ||||\n');
+    console.log('||||||||||||||||||||||||||||||||||||||||||||||||||||||');
+    console.log('||||                                              ||||');
+    console.log('||||    Beginning iTrust-Bravo provisioning...    ||||');
+    console.log('||||                                              ||||');
     console.log('||||||||||||||||||||||||||||||||||||||||||||||||||||||\n');
 
     var createKeyPairParams = { KeyName : 'iTrust-Bravo' };
