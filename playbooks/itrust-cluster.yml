@@ -6,3 +6,63 @@
 
   become: yes
 
+  tasks:
+
+    - name: Pass environment variables
+      lineinfile:
+        path: "/etc/environment"
+        line: "export {{ item }}={{ lookup('env', '{{ item }}') }}"
+      with_items:
+      - MAIL_USER
+      - MAIL_PASSWORD
+      - MYSQL_DB_USER
+      - MYSQL_DB_PASSWORD
+
+    - name: Install Git, JDK, Maven, MySQL
+      apt:
+        name: "{{ item }}"
+        update_cache: yes
+      with_items:
+      - git
+      - default-jdk
+      - maven
+
+    - name: Remove iTrust2-v1 directory if present
+      file:
+        path: "/home/{{ ansible_user }}/iTrust2-v1"
+        state: absent
+
+    - name: Copy iTrust2-v1 source code
+      copy:
+        src: "/home/ubuntu/deploy/iTrust2-v1"
+        dest: "/home/{{ ansible_user }}/"
+
+    - name: Copy db.properties template
+      template:
+        src: "/home/ubuntu/JenkinsDeploy/templates/db.properties"
+        dest: "/home/{{ ansible_user }}/iTrust2-v1/src/mail/java/db.properties"
+
+    - name: Copy email.properties.template
+      template:
+        src: "/home/ubuntu/JenkinsDeploy/templates/email.properties"
+        dest: "/home/{{ ansible_user }}/iTrust2-v1/src/mail/java/email.properties"
+
+    - name: Copy hibernate.properties template
+      template:
+        src: "/home/ubuntu/JenkinsDeploy/templates/hibernate.properties"
+        dest: "/home/{{ ansible_user }}/iTrust2-v1/src/mail/resources/hibernate.properties"
+
+    # - name: Run mvn clean test verify checkstyle:checkstyle
+    #   shell: "mvn clean test verify checkstyle:checkstyle"
+    #   args:
+    #     chdir: "/home/{{ ansible_user }}/iTrust2-v1/iTrust2"
+
+    # - name: Run mvn process-test-classes
+    #   shell: "mvn process-test-classes -f pom-data.xml"
+    #   args:
+    #     chdir: "/home/{{ ansible_user }}/iTrust2-v1/iTrust2"
+
+    - name: Run mvn jetty:run
+      shell: "nohup bash -c 'sudo mvn jetty:run' &"
+      args:
+        chdir: "/home/{{ ansible_user }}/iTrust2-v1/iTrust2"

@@ -1,0 +1,54 @@
+---
+- hosts: itrust-cluster
+
+  vars_files:
+    - /home/ubuntu/JenkinsDeploy/vars/main.yml
+
+  serial: 1
+
+  become: yes
+
+  tasks:
+
+    - name: Remove iTrust2-v1 and iTrust2-v2 directories if present
+      file:
+        path: "/home/{{ ansible_user }}/{{ item }}"
+        state: absent
+      with_items:
+      - iTrust2-v1
+      - iTrust2-v2
+
+    - name: Copy iTrust2-v2 source code
+      copy:
+        src: "/home/ubuntu/deploy/iTrust2-v2"
+        dest: "/home/{{ ansible_user }}/"
+
+    - name: Copy db.properties template
+      template:
+        src: "/home/ubuntu/JenkinsDeploy/templates/db.properties"
+        dest: "/home/{{ ansible_user }}/iTrust2-v2/src/mail/java/db.properties"
+
+    - name: Copy email.properties.template
+      template:
+        src: "/home/ubuntu/JenkinsDeploy/templates/email.properties"
+        dest: "/home/{{ ansible_user }}/iTrust2-v2/src/mail/java/email.properties"
+
+    - name: Copy hibernate.properties template
+      template:
+        src: "/home/ubuntu/JenkinsDeploy/templates/hibernate.properties"
+        dest: "/home/{{ ansible_user }}/iTrust2-v2/src/mail/resources/hibernate.properties"
+
+    # - name: Run mvn clean test verify checkstyle:checkstyle
+    #   shell: "mvn clean test verify checkstyle:checkstyle"
+    #   args:
+    #     chdir: "/home/{{ ansible_user }}/iTrust2-v2/iTrust2"
+
+    # - name: Run mvn process-test-classes
+    #   shell: "mvn process-test-classes -f pom-data.xml"
+    #   args:
+    #     chdir: "/home/{{ ansible_user }}/iTrust2-v2/iTrust2"
+
+    - name: Run mvn jetty:run
+      shell: "nohup bash -c 'sudo mvn jetty:run' &"
+      args:
+        chdir: "/home/{{ ansible_user }}/iTrust2-v2/iTrust2"
