@@ -47,7 +47,7 @@ function provision()
     console.log('|||||||||||||||||||||||||||||||||||||||||||||||||||||');
     console.log('||||                                             ||||');
     console.log('||||    Beginning iTrust-Echo provisioning...    ||||');
-    console.log('||||                                              ||||');
+    console.log('||||                                             ||||');
     console.log('|||||||||||||||||||||||||||||||||||||||||||||||||||||\n');
 
     var createKeyPairParams = { KeyName : 'iTrust-Echo' };
