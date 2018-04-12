@@ -183,7 +183,7 @@ function provision()
                                                                     inventory += ` ansible_ssh_private_key_file=/home/ubuntu/JenkinsDeploy/itrust-database.key`;
                                                                     inventory += ` ansible_ssh_common_args='-o StrictHostKeyChecking=no'`;
 
-                                                                    fs.writeFileSync('/home/ubuntu/JenkinsDeploy/itrust-database-inventory', inventory, function(err)
+                                                                    fs.writeFile('/home/ubuntu/JenkinsDeploy/itrust-database-inventory', inventory, function(err)
                                                                     {
                                                                         if (err) console.log('Failed to write inventory file\n\n', err, '\n');
                                                                         else console.log('Successfully wrote inventory file\n');
