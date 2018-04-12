@@ -10,6 +10,9 @@
 
   tasks:
 
+    - name: Stop Java process
+      shell: "pkill java"
+
     - name: Remove iTrust2-v1 and iTrust2-v2 directories if present
       file:
         path: "/home/{{ ansible_user }}/{{ item }}"
